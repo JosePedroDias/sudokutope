@@ -4,78 +4,86 @@ import * as fs from "fs";
 const FROM = "grid4.svg";
 const TO = "grid5.svg";
 
-function simpler(n) {
-    simplified += 1;
-    return Math.round(Number(n) * 10) / 10;
+function absPathToVertices(d) {
+    const commands = d.split(/(?=[MLHVCSQTAZmlhvcsqtaz])/);
+    const points = [];
+    for (const command of commands) {
+        const point = command.slice(1).split(/[\s,]+/).map(Number);
+        points.push(point);
+    }
+    return points;
 }
 
-const tagsToProcess = ['path'];
-const tagsToVisit = ['g'];
-const s = new Set();
+const tagsToProcess = ['svg', 'path', undefined];
+//const s = new Set();
+
+let zoneIdx = 0;
+let cellIdx = 0;
 
 function process(nodes) {
-    if (!nodes || !Array.isArray(nodes)) return;
+    if (!nodes || !Array.isArray(nodes)) return nodes;
 
-    for (const node of nodes) {
+    const toAdd = [];
+
+    //for (const node of nodes) {
+    for (let i = nodes.length - 1; i >= 0; --i) {
+        const node = nodes[i];
         const tag = Object.keys(node).find(key => key !== ':@' && key !== '#text');
 
-        s.add(tag);
+        if (!tagsToProcess.includes(tag)) continue;
 
-        //if (tag !== 'path') continue;
+        //s.add(tag);
 
-        const attributes = tag && node[':@'];
+        if (tag === 'path') {
+            const attrs = tag && node[':@'];
+            const fill = attrs['@@fill'];
 
-        if (attributes) {
-            const attrKeys = Object.keys(attributes).map(s => s.replace("@@", ""));
-            for (const attr of attrKeys) {
-                if (attrsToSimplify.includes(attr)) {
-                    const escAttr = "@@" + attr;
-                    const v = attributes[escAttr];
-                    const v2 = simpler(v);
-                    attributes[escAttr] = v2;
-                    simplified += 1;
+            if (fill !== 'none') {
+                const points = absPathToVertices(attrs['@@d']);
+                points.pop();
+                //console.log(points);
+
+                const center = points.reduce((acc, [x, y]) => {
+                    acc[0] += x;
+                    acc[1] += y;
+                    return acc;
+                });
+                center[0] /= points.length;
+                center[1] /= points.length;
+                //console.log(center);
+
+                const n = {
+                    text: {
+                        '#text': `#${cellIdx}`,
+                        ':@': {
+                            '@@x': center[0],
+                            '@@y': center[1],
+                            '@@id': `label${cellIdx}`,
+                        },
+                    }
                 }
-            }
+                toAdd.push(n);
 
-            if (attributes['@@d']) {
-                attributes['@@d'] = simplifyPath(attributes['@@d']);
-            }
-
-            if (attributes['@@opacity']) {
-                if (attributes['@@opacity'] === "1") {
-                    delete attributes['@@opacity'];
-                }   
-            }
-
-            if (attributes['@@stroke-width']) {
-                if (attributes['@@stroke-width'] === "1") {
-                    delete attributes['@@stroke-width'];
-                }   
-            }
-
-            if (attributes['@@id']) {
-                delete attributes['@@id'];
-            }
-
-            if (attributes['@@stroke-linejoin']) {
-                delete attributes['@@stroke-linejoin'];
-            }
-
-            if (attributes['@@style']) {
-                let v = attributes['@@style'];
-                v = v.replace(/opacity:\s*1/g, "");
-                v = v.replace(/stroke-linejoin:\s*round/g, "");
-                v = v.replace(/;\s*;/g, ";");
-                if (v[0] === ';') v = v.slice(1);
-                if (v.length === 0) delete attributes['@@style'];
-                else attributes['@@style'] = v;
+                attrs['@@id'] = `cell${cellIdx}`;
+                cellIdx += 1;
+            } else {
+                attrs['@@id'] = `zone${zoneIdx}`;
+                zoneIdx += 1;
             }
         }
 
         if (node[tag] && Array.isArray(node[tag])) {
-            process(node[tag]);
+            //process(node[tag]);
+            node[tag] = process(node[tag]);
         }
     }
+
+    if (toAdd.length > 0) {
+        //console.log(toAdd);
+        //nodes.push(...toAdd);
+        return nodes.concat(toAdd);
+    }
+    return nodes;
 }
 
 const options = {
@@ -89,11 +97,11 @@ const parser = new XMLParser(options);
 const builder = new XMLBuilder(options);
 
 const xmlContent = fs.readFileSync(FROM, "utf-8");
-const o = parser.parse(xmlContent);
+let o = parser.parse(xmlContent);
 
-process(o);
+o = process(o);
 
-console.log(s);
+//console.log(s);
 
 const resultSvg = builder.build(o);
 fs.writeFileSync(TO, resultSvg);
