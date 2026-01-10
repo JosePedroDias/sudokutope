@@ -3,6 +3,12 @@ import * as fs from "fs";
 
 const FROM = "grid4.svg";
 const TO = "grid5.svg";
+const TO_DATA = 'data.json';
+
+const DATA = {
+    cells: [],
+    zones: [],
+}
 
 function absPathToVertices(d) {
     const commands = d.split(/(?=[MLHVCSQTAZmlhvcsqtaz])/);
@@ -22,6 +28,17 @@ function randomColor() {
         color += letters[Math.floor(Math.random() * letters.length)];
     }
     return color;
+}
+
+function getCenter(points) {
+    const center = points.reduce((acc, [x, y]) => {
+        acc[0] += x;
+        acc[1] += y;
+        return acc;
+    }, [0, 0]);
+    center[0] /= points.length;
+    center[1] /= points.length;
+    return center;
 }
 
 const tagsToProcess = ['svg', 'path', undefined];
@@ -51,14 +68,7 @@ function process(nodes) {
             if (fill !== 'none') {
                 const points = absPathToVertices(attrs['@@d']);
                 points.pop();
-
-                const center = points.reduce((acc, [x, y]) => {
-                    acc[0] += x;
-                    acc[1] += y;
-                    return acc;
-                }, [0, 0]);
-                center[0] /= points.length;
-                center[1] /= points.length;
+                const center = getCenter(points);
 
                 const n = {
                     ':@': {
@@ -78,11 +88,26 @@ function process(nodes) {
                 }
                 toAdd.push(n);
 
+                DATA.cells.push({
+                    id: cellIdx,
+                    center,
+                    points,
+                });
+
                 attrs['@@fill'] = randomColor();
                 delete attrs['@@style'];
                 attrs['@@id'] = `cell${cellIdx}`;
                 cellIdx += 1;
             } else {
+                const points = absPathToVertices(attrs['@@d']);
+                points.pop();
+                const center = getCenter(points);
+                DATA.zones.push({
+                    id: zoneIdx,
+                    center,
+                    points,
+                });
+
                 attrs['@@id'] = `zone${zoneIdx}`;
                 zoneIdx += 1;
             }
@@ -117,3 +142,5 @@ o = process(o);
 
 const resultSvg = builder.build(o);
 fs.writeFileSync(TO, resultSvg);
+
+fs.writeFileSync(TO_DATA, JSON.stringify(DATA, null, 2));
