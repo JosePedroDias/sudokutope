@@ -14,6 +14,16 @@ function absPathToVertices(d) {
     return points;
 }
 
+function randomColor() {
+    //const letters = '0123456789ABCDEF';
+    const letters = '56789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * letters.length)];
+    }
+    return color;
+}
+
 const tagsToProcess = ['svg', 'path', undefined];
 //const s = new Set();
 
@@ -41,29 +51,35 @@ function process(nodes) {
             if (fill !== 'none') {
                 const points = absPathToVertices(attrs['@@d']);
                 points.pop();
-                //console.log(points);
 
                 const center = points.reduce((acc, [x, y]) => {
                     acc[0] += x;
                     acc[1] += y;
                     return acc;
-                });
+                }, [0, 0]);
                 center[0] /= points.length;
                 center[1] /= points.length;
-                //console.log(center);
 
                 const n = {
-                    text: {
-                        '#text': `#${cellIdx}`,
-                        ':@': {
-                            '@@x': center[0],
-                            '@@y': center[1],
-                            '@@id': `label${cellIdx}`,
-                        },
-                    }
+                    ':@': {
+                        '@@x': center[0],
+                        '@@y': center[1],
+                        '@@id': `label${cellIdx}`,
+                        '@@text-anchor': 'middle',
+                        '@@dominant-baseline': 'middle',
+                        '@@font-size': '13px',
+                        '@@font-family': 'Arial',
+                    },
+                    text: [
+                        {
+                            '#text': `${cellIdx}`,
+                        }
+                    ]
                 }
                 toAdd.push(n);
 
+                attrs['@@fill'] = randomColor();
+                delete attrs['@@style'];
                 attrs['@@id'] = `cell${cellIdx}`;
                 cellIdx += 1;
             } else {
@@ -73,16 +89,12 @@ function process(nodes) {
         }
 
         if (node[tag] && Array.isArray(node[tag])) {
-            //process(node[tag]);
             node[tag] = process(node[tag]);
         }
     }
 
-    if (toAdd.length > 0) {
-        //console.log(toAdd);
-        //nodes.push(...toAdd);
-        return nodes.concat(toAdd);
-    }
+    if (toAdd.length > 0) nodes = nodes.concat(toAdd);
+
     return nodes;
 }
 
