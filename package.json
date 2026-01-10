@@ -1,0 +1,14 @@
+{
+  "name": "sudokutope",
+  "version": "1.0.0",
+  "private": true,
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {},
+  "dependencies": {
+    "fast-xml-parser": "^5.3.3",
+    "svgo": "^4.0.0"
+  }
+}
