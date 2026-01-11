@@ -92,13 +92,17 @@ function highlightPetal(petalId) {
 
 function check(fromIdx) {
     clear();
+    let incomplete = false;
     let ok = true;
     for (let [name, g] of Object.entries(cellGroups)) {
         const seenIndices = [];
         const seen = [];
         for (let c of g) {
             const v = state[c];
-            if (v === undefined) continue;
+            if (v === undefined) {
+                incomplete = true;
+                continue;
+            }
             const seenIdx = seen.indexOf(v);
             if (seenIdx!== -1) {
                 //console.log('duplicate', v, 'in', name, g);
@@ -112,7 +116,12 @@ function check(fromIdx) {
         }
     }
     if (ok) {
-        colorize(fromIdx);
+        if (!incomplete) {
+            highlightPetal(-1);
+            for (let i = 0; i < 40; i++) cellFromId(i).setAttribute('fill', '#00FF00');
+        } else {
+            colorize(fromIdx);
+        }
     }
     return ok;
 }
@@ -199,9 +208,6 @@ document.addEventListener('keydown', (ev) => {
             state[selectedIndex] = parseInt(k, 10);
             if (!check(selectedIndex)) {
                 state[selectedIndex] = prev;
-                //setLabel(selectedIndex, prev || '');
-            } else {
-                
             }
         }
         save();
