@@ -6,17 +6,18 @@ based on https://sudokutope.com/
 
 Sudoku-like puzzle with:
 
-- 8 different symbols;
 - non-orthogonal grid (a zonohedron, possibly a rhombicuboctahedron?);
 
     - easy
+        - 8 different symbols (0-7);
         - grid has 40 cells;
-        - there are 5 symmetrical petals, with 8 cells each - on each petal, all the 8 symbols must appear once;
-        - there are 10 "arms"/arcs, with 8 cells each - on each arm, all the 8 symbols must appear once.
+        - there are 5 symmetrical petals, with 8 cells each - on each petal, all the symbols must appear once;
+        - there are 10 "arms"/arcs, with 8 cells each - on each arm, all the symbols must appear once;
     - medium
+        - 10 different symbols (0-9);
         - grid has 60 cells;
-        - there are 6 symmetrical petals, with 8 cells each - on each petal, all the 8 symbols must appear once;
-        - there are ? "arms"/arcs, with 8 cells each - on each arm, all the 8 symbols must appear once.
+        - there are 6 symmetrical petals, with 10 cells each - on each petal, all the symbols must appear once;
+        - there are 12 "arms"/arcs, with 10 cells each - on each arm, all the symbols must appear once.
 
 
 ## Artwork and data
@@ -32,15 +33,24 @@ I believe my highlighting approach to be more effective.
 
 ## puzzles
 
+(these puzzles are from the site. I haven't attempted to generate puzzles)
+
 ```js
-copy(localStorage.getItem('SDKTP'))
-localStorage.setItem('SDKTP', 'REPLACE_ME')
+copy(localStorage.getItem('SDKTP40'))
+copy(localStorage.getItem('SDKTP60'))
+
+localStorage.setItem('SDKTP40', 'REPLACE_ME')
+localStorage.setItem('SDKTP60', 'REPLACE_ME')
 ```
 
-### easy
+### easy (40)
 
 ```json
 [1,null,null,7,null,null,5,3,null,3,null,null,null,8,2,null,null,6,4,null,null,null,1,null,null,null,null,7,null,null,5,4,null,3,null,null,null,2,null,null]
 ```
 
-(this puzzle is from the site's easy category. I haven't attempted to generate puzzles)
+### medium (60)
+
+```json
+[null,null,null,null,null,3,null,1,null,null,null,null,null,null,null,null,5,2,null,8,null,null,null,3,null,null,null,null,7,null,6,9,null,null,null,null,null,null,null,2,null,null,9,null,null,null,4,null,null,null,null,null,null,null,null,null,null,null,null,null]
+```

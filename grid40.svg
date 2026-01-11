@@ -1,1 +1,178 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg height="487" version="1.1" width="500" style="overflow: hidden; position: relative;" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg"><path fill="#C6DFDD" stroke="#808080" d="M318 34.3L386 56.4L428 114.2L360 92.1L318 34.3" id="cell39"></path><path fill="#D698B6" stroke="#808080" d="M360 92.1L428 114.2L428 185.7L360 163.6L360 92.1" id="cell38"></path><path fill="#698CFD" stroke="#808080" d="M360 163.6L428 185.7L386 243.5L318 221.4L360 163.6" id="cell37"></path><path fill="#DDCBC7" stroke="#808080" d="M318 221.4L386 243.5L318 265.6L250 243.5L318 221.4" id="cell36"></path><path fill="#85AEAC" stroke="#808080" d="M250 243.5L318 265.6L360 323.4L292 301.3L250 243.5" id="cell35"></path><path fill="#9E5A88" stroke="#808080" d="M292 301.3L360 323.4L360 394.9L292 372.8L292 301.3" id="cell34"></path><path fill="#F7CDDF" stroke="#808080" d="M292 372.8L360 394.9L318 452.7L250 430.6L292 372.8" id="cell33"></path><path fill="#E5BD69" stroke="#808080" d="M250 430.6L318 452.7L250 474.8L182 452.7L250 430.6" id="cell32"></path><path fill="#D8AFFC" stroke="#808080" d="M250 12.2L318 34.3L250 56.4L182 34.3L250 12.2" id="cell31"></path><path fill="#FAEBDA" stroke="#808080" d="M182 34.3L250 56.4L208 114.2L140 92.1L182 34.3" id="cell30"></path><path fill="#D957FE" stroke="#808080" d="M140 92.1L208 114.2L208 185.7L140 163.6L140 92.1" id="cell29"></path><path fill="#79D665" stroke="#808080" d="M140 163.6L208 185.7L250 243.5L182 221.4L140 163.6" id="cell28"></path><path fill="#66FA7D" stroke="#808080" d="M182 221.4L250 243.5L182 265.6L114 243.5L182 221.4" id="cell27"></path><path fill="#69AB6E" stroke="#808080" d="M114 243.5L182 265.6L140 323.4L72 301.3L114 243.5" id="cell26"></path><path fill="#798FCB" stroke="#808080" d="M72 301.3L140 323.4L140 394.9L72 372.8L72 301.3" id="cell25"></path><path fill="#8DB5CF" stroke="#808080" d="M72 372.8L140 394.9L182 452.7L114 430.6L72 372.8" id="cell24"></path><path fill="#7EDB5F" stroke="#808080" d="M318 34.3L360 92.1L292 114.2L250 56.4L318 34.3" id="cell23"></path><path fill="#88FBBB" stroke="#808080" d="M250 56.4L292 114.2L250 172L208 114.2L250 56.4" id="cell22"></path><path fill="#F9AA9F" stroke="#808080" d="M208 114.2L250 172L250 243.5L208 185.7L208 114.2" id="cell21"></path><path fill="#6B8ECF" stroke="#808080" d="M140 163.6L182 221.4L114 243.5L72 185.7L140 163.6" id="cell20"></path><path fill="#B6A98E" stroke="#808080" d="M72 185.7L114 243.5L72 301.3L30 243.5L72 185.7" id="cell19"></path><path fill="#656A9E" stroke="#808080" d="M30 243.5L72 301.3L72 372.8L30 315L30 243.5" id="cell18"></path><path fill="#CFDF86" stroke="#808080" d="M428 114.2L470 172L470 243.5L428 185.7L428 114.2" id="cell17"></path><path fill="#87CD56" stroke="#808080" d="M428 185.7L470 243.5L428 301.3L386 243.5L428 185.7" id="cell16"></path><path fill="#DFBE65" stroke="#808080" d="M386 243.5L428 301.3L360 323.4L318 265.6L386 243.5" id="cell15"></path><path fill="#E68ED5" stroke="#808080" d="M250 243.5L292 301.3L292 372.8L250 315L250 243.5" id="cell14"></path><path fill="#676AAD" stroke="#808080" d="M250 315L292 372.8L250 430.6L208 372.8L250 315" id="cell13"></path><path fill="#7BDFD5" stroke="#808080" d="M208 372.8L250 430.6L182 452.7L140 394.9L208 372.8" id="cell12"></path><path fill="#9597E9" stroke="#808080" d="M360 92.1L360 163.6L292 185.7L292 114.2L360 92.1" id="cell11"></path><path fill="#E6AA77" stroke="#808080" d="M292 114.2L292 185.7L250 243.5L250 172L292 114.2" id="cell10"></path><path fill="#66EFCD" stroke="#808080" d="M140 92.1L140 163.6L72 185.7L72 114.2L140 92.1" id="cell9"></path><path fill="#6B9BCA" stroke="#808080" d="M72 114.2L72 185.7L30 243.5L30 172L72 114.2" id="cell8"></path><path fill="#BAA6FE" stroke="#808080" d="M470 243.5L470 315L428 372.8L428 301.3L470 243.5" id="cell7"></path><path fill="#965CCD" stroke="#808080" d="M428 301.3L428 372.8L360 394.9L360 323.4L428 301.3" id="cell6"></path><path fill="#9CDEFB" stroke="#808080" d="M250 243.5L250 315L208 372.8L208 301.3L250 243.5" id="cell5"></path><path fill="#DA6AD7" stroke="#808080" d="M208 301.3L208 372.8L140 394.9L140 323.4L208 301.3" id="cell4"></path><path fill="#FDF559" stroke="#808080" d="M360 163.6L318 221.4L250 243.5L292 185.7L360 163.6" id="cell3"></path><path fill="#DBB99B" stroke="#808080" d="M182 34.3L140 92.1L72 114.2L114 56.4L182 34.3" id="cell2"></path><path fill="#78DA58" stroke="#808080" d="M428 372.8L386 430.6L318 452.7L360 394.9L428 372.8" id="cell1"></path><path fill="#CA758D" stroke="#808080" d="M250 243.5L208 301.3L140 323.4L182 265.6L250 243.5" id="cell0"></path><path fill="none" stroke="#000000" d="M318 265.6L250 243.5L250 243.5L292 185.7L360 163.6L360 163.6L360 163.6L360 92.1L428 114.2L428 114.2L470 172L470 243.5L470 243.5L470 243.5L470 315L428 372.8L428 301.3L428 301.3L428 301.3L360 323.4L318 265.6L318 265.6" stroke-width="3" id="zone4"></path><path fill="none" stroke="#000000" d="M292 185.7L250 243.5L250 243.5L208 185.7L208 114.2L208 114.2L208 114.2L140 92.1L182 34.3L182 34.3L250 12.2L318 34.3L318 34.3L318 34.3L386 56.4L428 114.2L360 92.1L360 92.1L360 92.1L360 163.6L292 185.7L292 185.7" stroke-width="3" id="zone3"></path><path fill="none" stroke="#000000" d="M208 185.7L250 243.5L250 243.5L182 265.6L114 243.5L114 243.5L114 243.5L72 301.3L30 243.5L30 243.5L30 172L72 114.2L72 114.2L72 114.2L114 56.4L182 34.3L140 92.1L140 92.1L140 92.1L208 114.2L208 185.7L208 185.7" stroke-width="3" id="zone2"></path><path fill="none" stroke="#000000" d="M182 265.6L250 243.5L250 243.5L250 315L208 372.8L208 372.8L208 372.8L250 430.6L182 452.7L182 452.7L114 430.6L72 372.8L72 372.8L72 372.8L30 315L30 243.5L72 301.3L72 301.3L72 301.3L114 243.5L182 265.6L182 265.6" stroke-width="3" id="zone1"></path><path fill="none" stroke="#000000" d="M250 315L250 243.5L250 243.5L318 265.6L360 323.4L360 323.4L360 323.4L428 301.3L428 372.8L428 372.8L386 430.6L318 452.7L318 452.7L318 452.7L250 474.8L182 452.7L250 430.6L250 430.6L250 430.6L208 372.8L250 315L250 315" stroke-width="3" id="zone0"></path><text x="195" y="283.45" id="label0" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">0</text><text x="373" y="412.75" id="label1" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">1</text><text x="127" y="74.25" id="label2" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">2</text><text x="305" y="203.55" id="label3" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">3</text><text x="174" y="348.1" id="label4" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">4</text><text x="229" y="308.15" id="label5" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">5</text><text x="394" y="348.1" id="label6" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">6</text><text x="449" y="308.15" id="label7" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">7</text><text x="51" y="178.85" id="label8" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">8</text><text x="106" y="138.9" id="label9" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">9</text><text x="271" y="178.85" id="label10" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">10</text><text x="326" y="138.9" id="label11" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">11</text><text x="195" y="412.75" id="label12" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">12</text><text x="250" y="372.8" id="label13" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">13</text><text x="271" y="308.15" id="label14" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">14</text><text x="373" y="283.45" id="label15" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">15</text><text x="428" y="243.5" id="label16" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">16</text><text x="449" y="178.85000000000002" id="label17" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">17</text><text x="51" y="308.15" id="label18" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">18</text><text x="72" y="243.5" id="label19" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">19</text><text x="127" y="203.55" id="label20" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">20</text><text x="229" y="178.85000000000002" id="label21" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">21</text><text x="250" y="114.2" id="label22" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">22</text><text x="305" y="74.25" id="label23" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">23</text><text x="127" y="412.75" id="label24" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">24</text><text x="106" y="348.1" id="label25" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">25</text><text x="127" y="283.45" id="label26" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">26</text><text x="182" y="243.5" id="label27" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">27</text><text x="195" y="203.54999999999998" id="label28" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">28</text><text x="174" y="138.9" id="label29" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">29</text><text x="195" y="74.25" id="label30" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">30</text><text x="250" y="34.3" id="label31" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">31</text><text x="250" y="452.7" id="label32" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">32</text><text x="305" y="412.75" id="label33" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">33</text><text x="326" y="348.1" id="label34" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">34</text><text x="305" y="283.45" id="label35" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">35</text><text x="318" y="243.5" id="label36" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">36</text><text x="373" y="203.54999999999998" id="label37" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">37</text><text x="394" y="138.9" id="label38" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">38</text><text x="373" y="74.25" id="label39" text-anchor="middle" dominant-baseline="middle" font-size="18px" font-family="Arial">39</text></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg height="487" version="1.1" width="500" style="overflow: hidden; position: relative;"
+    xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+    <path fill="#C6DFDD" stroke="#808080" d="M318 34.3L386 56.4L428 114.2L360 92.1L318 34.3"
+        id="cell39"></path>
+    <path fill="#D698B6" stroke="#808080" d="M360 92.1L428 114.2L428 185.7L360 163.6L360 92.1"
+        id="cell38"></path>
+    <path fill="#698CFD" stroke="#808080" d="M360 163.6L428 185.7L386 243.5L318 221.4L360 163.6"
+        id="cell37"></path>
+    <path fill="#DDCBC7" stroke="#808080" d="M318 221.4L386 243.5L318 265.6L250 243.5L318 221.4"
+        id="cell36"></path>
+    <path fill="#85AEAC" stroke="#808080" d="M250 243.5L318 265.6L360 323.4L292 301.3L250 243.5"
+        id="cell35"></path>
+    <path fill="#9E5A88" stroke="#808080" d="M292 301.3L360 323.4L360 394.9L292 372.8L292 301.3"
+        id="cell34"></path>
+    <path fill="#F7CDDF" stroke="#808080" d="M292 372.8L360 394.9L318 452.7L250 430.6L292 372.8"
+        id="cell33"></path>
+    <path fill="#E5BD69" stroke="#808080" d="M250 430.6L318 452.7L250 474.8L182 452.7L250 430.6"
+        id="cell32"></path>
+    <path fill="#D8AFFC" stroke="#808080" d="M250 12.2L318 34.3L250 56.4L182 34.3L250 12.2"
+        id="cell31"></path>
+    <path fill="#FAEBDA" stroke="#808080" d="M182 34.3L250 56.4L208 114.2L140 92.1L182 34.3"
+        id="cell30"></path>
+    <path fill="#D957FE" stroke="#808080" d="M140 92.1L208 114.2L208 185.7L140 163.6L140 92.1"
+        id="cell29"></path>
+    <path fill="#79D665" stroke="#808080" d="M140 163.6L208 185.7L250 243.5L182 221.4L140 163.6"
+        id="cell28"></path>
+    <path fill="#66FA7D" stroke="#808080" d="M182 221.4L250 243.5L182 265.6L114 243.5L182 221.4"
+        id="cell27"></path>
+    <path fill="#69AB6E" stroke="#808080" d="M114 243.5L182 265.6L140 323.4L72 301.3L114 243.5"
+        id="cell26"></path>
+    <path fill="#798FCB" stroke="#808080" d="M72 301.3L140 323.4L140 394.9L72 372.8L72 301.3"
+        id="cell25"></path>
+    <path fill="#8DB5CF" stroke="#808080" d="M72 372.8L140 394.9L182 452.7L114 430.6L72 372.8"
+        id="cell24"></path>
+    <path fill="#7EDB5F" stroke="#808080" d="M318 34.3L360 92.1L292 114.2L250 56.4L318 34.3"
+        id="cell23"></path>
+    <path fill="#88FBBB" stroke="#808080" d="M250 56.4L292 114.2L250 172L208 114.2L250 56.4"
+        id="cell22"></path>
+    <path fill="#F9AA9F" stroke="#808080" d="M208 114.2L250 172L250 243.5L208 185.7L208 114.2"
+        id="cell21"></path>
+    <path fill="#6B8ECF" stroke="#808080" d="M140 163.6L182 221.4L114 243.5L72 185.7L140 163.6"
+        id="cell20"></path>
+    <path fill="#B6A98E" stroke="#808080" d="M72 185.7L114 243.5L72 301.3L30 243.5L72 185.7"
+        id="cell19"></path>
+    <path fill="#656A9E" stroke="#808080" d="M30 243.5L72 301.3L72 372.8L30 315L30 243.5"
+        id="cell18"></path>
+    <path fill="#CFDF86" stroke="#808080" d="M428 114.2L470 172L470 243.5L428 185.7L428 114.2"
+        id="cell17"></path>
+    <path fill="#87CD56" stroke="#808080" d="M428 185.7L470 243.5L428 301.3L386 243.5L428 185.7"
+        id="cell16"></path>
+    <path fill="#DFBE65" stroke="#808080" d="M386 243.5L428 301.3L360 323.4L318 265.6L386 243.5"
+        id="cell15"></path>
+    <path fill="#E68ED5" stroke="#808080" d="M250 243.5L292 301.3L292 372.8L250 315L250 243.5"
+        id="cell14"></path>
+    <path fill="#676AAD" stroke="#808080" d="M250 315L292 372.8L250 430.6L208 372.8L250 315"
+        id="cell13"></path>
+    <path fill="#7BDFD5" stroke="#808080" d="M208 372.8L250 430.6L182 452.7L140 394.9L208 372.8"
+        id="cell12"></path>
+    <path fill="#9597E9" stroke="#808080" d="M360 92.1L360 163.6L292 185.7L292 114.2L360 92.1"
+        id="cell11"></path>
+    <path fill="#E6AA77" stroke="#808080" d="M292 114.2L292 185.7L250 243.5L250 172L292 114.2"
+        id="cell10"></path>
+    <path fill="#66EFCD" stroke="#808080" d="M140 92.1L140 163.6L72 185.7L72 114.2L140 92.1"
+        id="cell9"></path>
+    <path fill="#6B9BCA" stroke="#808080" d="M72 114.2L72 185.7L30 243.5L30 172L72 114.2" id="cell8"></path>
+    <path fill="#BAA6FE" stroke="#808080" d="M470 243.5L470 315L428 372.8L428 301.3L470 243.5"
+        id="cell7"></path>
+    <path fill="#965CCD" stroke="#808080" d="M428 301.3L428 372.8L360 394.9L360 323.4L428 301.3"
+        id="cell6"></path>
+    <path fill="#9CDEFB" stroke="#808080" d="M250 243.5L250 315L208 372.8L208 301.3L250 243.5"
+        id="cell5"></path>
+    <path fill="#DA6AD7" stroke="#808080" d="M208 301.3L208 372.8L140 394.9L140 323.4L208 301.3"
+        id="cell4"></path>
+    <path fill="#FDF559" stroke="#808080" d="M360 163.6L318 221.4L250 243.5L292 185.7L360 163.6"
+        id="cell3"></path>
+    <path fill="#DBB99B" stroke="#808080" d="M182 34.3L140 92.1L72 114.2L114 56.4L182 34.3"
+        id="cell2"></path>
+    <path fill="#78DA58" stroke="#808080" d="M428 372.8L386 430.6L318 452.7L360 394.9L428 372.8"
+        id="cell1"></path>
+    <path fill="#CA758D" stroke="#808080" d="M250 243.5L208 301.3L140 323.4L182 265.6L250 243.5"
+        id="cell0"></path>
+    <path fill="none" stroke="#000000"
+        d="M318 265.6L250 243.5L250 243.5L292 185.7L360 163.6L360 163.6L360 163.6L360 92.1L428 114.2L428 114.2L470 172L470 243.5L470 243.5L470 243.5L470 315L428 372.8L428 301.3L428 301.3L428 301.3L360 323.4L318 265.6L318 265.6"
+        stroke-width="3" id="zone4"></path>
+    <path fill="none" stroke="#000000"
+        d="M292 185.7L250 243.5L250 243.5L208 185.7L208 114.2L208 114.2L208 114.2L140 92.1L182 34.3L182 34.3L250 12.2L318 34.3L318 34.3L318 34.3L386 56.4L428 114.2L360 92.1L360 92.1L360 92.1L360 163.6L292 185.7L292 185.7"
+        stroke-width="3" id="zone3"></path>
+    <path fill="none" stroke="#000000"
+        d="M208 185.7L250 243.5L250 243.5L182 265.6L114 243.5L114 243.5L114 243.5L72 301.3L30 243.5L30 243.5L30 172L72 114.2L72 114.2L72 114.2L114 56.4L182 34.3L140 92.1L140 92.1L140 92.1L208 114.2L208 185.7L208 185.7"
+        stroke-width="3" id="zone2"></path>
+    <path fill="none" stroke="#000000"
+        d="M182 265.6L250 243.5L250 243.5L250 315L208 372.8L208 372.8L208 372.8L250 430.6L182 452.7L182 452.7L114 430.6L72 372.8L72 372.8L72 372.8L30 315L30 243.5L72 301.3L72 301.3L72 301.3L114 243.5L182 265.6L182 265.6"
+        stroke-width="3" id="zone1"></path>
+    <path fill="none" stroke="#000000"
+        d="M250 315L250 243.5L250 243.5L318 265.6L360 323.4L360 323.4L360 323.4L428 301.3L428 372.8L428 372.8L386 430.6L318 452.7L318 452.7L318 452.7L250 474.8L182 452.7L250 430.6L250 430.6L250 430.6L208 372.8L250 315L250 315"
+        stroke-width="3" id="zone0"></path>
+    <text x="195" y="283.45" id="label0" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">0</text>
+    <text x="373" y="412.75" id="label1" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">1</text>
+    <text x="127" y="74.25" id="label2" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">2</text>
+    <text x="305" y="203.55" id="label3" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">3</text>
+    <text x="174" y="348.1" id="label4" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">4</text>
+    <text x="229" y="308.15" id="label5" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">5</text>
+    <text x="394" y="348.1" id="label6" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">6</text>
+    <text x="449" y="308.15" id="label7" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">7</text>
+    <text x="51" y="178.85" id="label8" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">8</text>
+    <text x="106" y="138.9" id="label9" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">9</text>
+    <text x="271" y="178.85" id="label10" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">10</text>
+    <text x="326" y="138.9" id="label11" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">11</text>
+    <text x="195" y="412.75" id="label12" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">12</text>
+    <text x="250" y="372.8" id="label13" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">13</text>
+    <text x="271" y="308.15" id="label14" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">14</text>
+    <text x="373" y="283.45" id="label15" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">15</text>
+    <text x="428" y="243.5" id="label16" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">16</text>
+    <text x="449" y="178.85000000000002" id="label17" text-anchor="middle"
+        dominant-baseline="middle" font-size="18px" font-family="Arial">17</text>
+    <text x="51" y="308.15" id="label18" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">18</text>
+    <text x="72" y="243.5" id="label19" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">19</text>
+    <text x="127" y="203.55" id="label20" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">20</text>
+    <text x="229" y="178.85000000000002" id="label21" text-anchor="middle"
+        dominant-baseline="middle" font-size="18px" font-family="Arial">21</text>
+    <text x="250" y="114.2" id="label22" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">22</text>
+    <text x="305" y="74.25" id="label23" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">23</text>
+    <text x="127" y="412.75" id="label24" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">24</text>
+    <text x="106" y="348.1" id="label25" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">25</text>
+    <text x="127" y="283.45" id="label26" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">26</text>
+    <text x="182" y="243.5" id="label27" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">27</text>
+    <text x="195" y="203.54999999999998" id="label28" text-anchor="middle"
+        dominant-baseline="middle" font-size="18px" font-family="Arial">28</text>
+    <text x="174" y="138.9" id="label29" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">29</text>
+    <text x="195" y="74.25" id="label30" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">30</text>
+    <text x="250" y="34.3" id="label31" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">31</text>
+    <text x="250" y="452.7" id="label32" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">32</text>
+    <text x="305" y="412.75" id="label33" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">33</text>
+    <text x="326" y="348.1" id="label34" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">34</text>
+    <text x="305" y="283.45" id="label35" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">35</text>
+    <text x="318" y="243.5" id="label36" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">36</text>
+    <text x="373" y="203.54999999999998" id="label37" text-anchor="middle"
+        dominant-baseline="middle" font-size="18px" font-family="Arial">37</text>
+    <text x="394" y="138.9" id="label38" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">38</text>
+    <text x="373" y="74.25" id="label39" text-anchor="middle" dominant-baseline="middle"
+        font-size="18px" font-family="Arial">39</text>
+</svg>

@@ -1,8 +1,8 @@
 import { XMLParser, XMLBuilder } from "fast-xml-parser";
 import * as fs from "fs";
 
-const FROM = "grid3_simp.svg";
-const TO = "grid3b.svg";
+const FROM = "../grid60b.svg";
+const TO = "../grid60c.svg";
 
 function removeInvisibleElements(nodes) {
     if (!nodes || !Array.isArray(nodes)) return;

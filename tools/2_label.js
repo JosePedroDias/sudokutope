@@ -1,9 +1,9 @@
 import { XMLParser, XMLBuilder } from "fast-xml-parser";
 import * as fs from "fs";
 
-const FROM = "grid4.svg";
-const TO = "grid5.svg";
-const TO_DATA = 'data.json';
+const FROM = "../grid60c.svg";
+const TO = "../grid60d.svg";
+const TO_DATA = '../data60.json';
 
 const DATA = {
     cells: [],
@@ -21,7 +21,6 @@ function absPathToVertices(d) {
 }
 
 function randomColor() {
-    //const letters = '0123456789ABCDEF';
     const letters = '56789ABCDEF';
     let color = '#';
     for (let i = 0; i < 6; i++) {
