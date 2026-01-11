@@ -1,37 +1,9 @@
-// Cell group definitions
-// Each cell belongs to 1 petal (zone) and 2 arms
-const cellGroups = {
-    // Petal 0 - bottom right petal
-    petal0: [1, 32, 35, 14, 13, 33, 34, 6],
-    // Petal 1 - bottom left petal
-    petal1: [0, 26, 25, 4, 12, 24, 18, 5],
-    // Petal 2 - left petal
-    petal2: [28, 20, 9, 29, 2, 8, 19, 27],
-    // Petal 3 - top petal
-    petal3: [22, 10, 21, 23, 11, 31, 30, 39],
-    // Petal 4 - right petal
-    petal4: [3, 37, 38, 17, 16, 15, 7, 36],
-
-    // 10 arms
-    arm0: [32, 33, 34, 35, 36, 37, 38, 39],
-    arm1: [24, 12, 13, 14, 35, 15, 16, 17],
-    arm2: [18, 25, 4, 5, 14, 34, 6, 7],
-    arm3: [8, 19, 26, 0, 5, 13, 33, 1],
-    arm4: [2, 9, 20, 27, 0, 4, 12, 32],
-    arm5: [31, 30, 29, 28, 27, 26, 25, 24],
-    arm6: [39, 23, 22, 21, 28, 20, 19, 18],
-    arm7: [17, 38, 11, 10, 21, 29, 9, 8],
-    arm8: [7, 16, 37, 3, 10, 22, 30, 2],
-    arm8: [1, 6, 15, 36, 3, 11, 23, 31],
-    arm9: [2, 30, 22, 10, 3, 37, 16, 7],
-};
-
-////
-
 let state = new Array(40).fill(true);
 {
     for (let i = 0; i < 40; i++) state[i] = undefined;
 }
+
+let cellGroups = {};
 
 ////
 
@@ -178,9 +150,13 @@ function colorize(cellNumber) {
 
 let selectedIndex = -1;
 
-fetch('grid5.svg')
-    .then(response => response.text())
-    .then(svgText => {
+Promise.all([
+    fetch('data40.json').then(response => response.json()),
+    fetch('grid40.svg').then(response => response.text()),
+])
+    .then(([data, svgText]) => {
+        cellGroups = data.constrants;
+
         // parse the SVG text into a DOM element and add it to the page
         const parser = new DOMParser();
         const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
