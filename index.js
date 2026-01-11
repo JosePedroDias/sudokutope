@@ -26,11 +26,26 @@ const cellGroups = {
     arm9: [2, 30, 22, 10, 3, 37, 16, 7],
 };
 
-const state = new Array(40).fill(true);
+let state = new Array(40).fill(true);
 {
     for (let i = 0; i < 40; i++) state[i] = undefined;
 }
 
+const LS_KEY = 'SDKTP';
+
+function load() {
+    const s = localStorage.getItem(LS_KEY);
+    if (s) {
+        const o = JSON.parse(s);
+        state = o.map(v => v === null ? undefined : v);
+        for (let i = 0; i < 40; i++) setLabel(i, state[i] || '');
+    }
+}
+
+function save() {
+    const s = JSON.stringify(state);
+    localStorage.setItem(LS_KEY, s);
+}
 
 function setColor(cell, r, g, b) {
     const f = cell.getAttribute('fill');
@@ -40,8 +55,19 @@ function setColor(cell, r, g, b) {
     cell.setAttribute('fill', `#${R}${G}${B}`);
 }
 
+function inWhichPetal(cellId) {
+    for (let i = 0; i < 5; i++) {
+        if (cellGroups[`petal${i}`].includes(cellId)) return i;
+    }
+    return -1;
+}
+
 function cellFromId(id) {
     return document.getElementById(`cell${id}`);
+}
+
+function petalFromId(id) {
+    return document.getElementById(`zone${id}`);
 }
 
 function setLabel(id, text) {
@@ -50,7 +76,74 @@ function setLabel(id, text) {
 }
 
 function clear() {
-    for (let i = 0; i < 40; i++) cellFromId(i).setAttribute('fill', '#555555');
+    for (let i = 0; i < 40; i++) {
+        cellFromId(i).setAttribute('fill', '#777777');
+        cellFromId(i).setAttribute('stroke', '#000000');
+    }
+}
+
+function highlightPetal(petalId) {
+    for (let i = 0; i < 5; i++) {
+        const highlight = i === petalId;
+        petalFromId(i).setAttribute('stroke', highlight ? '#0000FF' : '#000000');
+        petalFromId(i).setAttribute('stroke-width', highlight ? 6 : 2);
+    }
+}
+
+function check(fromIdx) {
+    clear();
+    let ok = true;
+    for (let [name, g] of Object.entries(cellGroups)) {
+        const seenIndices = [];
+        const seen = [];
+        for (let c of g) {
+            const v = state[c];
+            if (v === undefined) continue;
+            const seenIdx = seen.indexOf(v);
+            if (seenIdx!== -1) {
+                //console.log('duplicate', v, 'in', name, g);
+                cellFromId(c).setAttribute('fill', '#FFAAAA');
+                cellFromId(seenIndices[seenIdx]).setAttribute('fill', '#FFAAAA');
+                ok = false;
+                break;
+            }
+            seen.push(v);
+            seenIndices.push(c);
+        }
+    }
+    if (ok) {
+        colorize(fromIdx);
+    }
+    return ok;
+}
+
+function colorize(cellNumber) {
+    clear();
+    let colors = [
+        ['FF', undefined, undefined],
+        [undefined, 'FF', undefined],
+        [undefined, undefined, 'FF'],
+    ];
+    let cIdx = 0;
+
+    const petalId = inWhichPetal(cellNumber);
+    highlightPetal(petalId);
+    for (const [name, cells] of Object.entries(cellGroups)) {
+        if (name.startsWith('petal')) continue;
+        if (cells.includes(cellNumber)) {
+            //console.log('name', name);//, cells);
+            let [r, g, b] = colors[cIdx++];
+            for (let c of cells) {
+                if (c !== cellNumber) {
+                    setColor(cellFromId(c), r, g, b);
+                }
+            }
+        }
+    }
+
+    cellFromId(cellNumber).setAttribute('fill', '#FFFFFF');
+    selectedIndex = cellNumber;
+    //console.log(`Cell ${cellNumber}`);
 }
 
 let selectedIndex = -1;
@@ -72,38 +165,14 @@ fetch('grid5.svg')
 
         clear();
         for (let i = 0; i < 40; i++) setLabel(i, state [i] || '');
+        load();
 
         // add click event listener to the SVG
         svgElement.addEventListener('click', (ev) => {
             const target = ev.target;
-
             if (target.tagName === 'path' && target.id && target.id.startsWith('cell')) {
                 const cellNumber = parseInt(target.id.replace('cell', ''));
-
-                clear();
-
-                let colors = [
-                    ['FF', undefined, undefined],
-                    [undefined, 'FF', undefined],
-                    [undefined, undefined, 'FF'],
-                ];
-                let cIdx = 0;
-
-                for (const [groupName, cells] of Object.entries(cellGroups)) {
-                    if (cells.includes(cellNumber)) {
-                        //console.log('groupName', groupName);//, cells);
-                        let [r, g, b] = colors[cIdx++];
-                        for (let c of cells) {
-                            if (c !== cellNumber) {
-                                setColor(cellFromId(c), r, g, b);
-                            }
-                        }
-                    }
-                }
-
-                cellFromId(cellNumber).setAttribute('fill', '#FFFFFF');
-                selectedIndex = cellNumber;
-                //console.log(`Cell ${cellNumber}`);
+                colorize(cellNumber);
             }
         });
     })
@@ -118,13 +187,24 @@ document.addEventListener('keydown', (ev) => {
     if (selectedIndex === -1) return;
     const k = ev.key;
     if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
+    //console.log('key', k);
     if (keys.includes(k)) {
-        //console.log('key', k);
         if (k === 'Backspace') {
             setLabel(selectedIndex, '');
+            state[selectedIndex] = undefined;
+            colorize(selectedIndex);
         } else {
+            let prev = state[selectedIndex];
             setLabel(selectedIndex, k);
+            state[selectedIndex] = parseInt(k, 10);
+            if (!check(selectedIndex)) {
+                state[selectedIndex] = prev;
+                //setLabel(selectedIndex, prev || '');
+            } else {
+                
+            }
         }
+        save();
         ev.preventDefault();
         ev.stopPropagation();
     }
