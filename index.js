@@ -26,10 +26,14 @@ const cellGroups = {
     arm9: [2, 30, 22, 10, 3, 37, 16, 7],
 };
 
+////
+
 let state = new Array(40).fill(true);
 {
     for (let i = 0; i < 40; i++) state[i] = undefined;
 }
+
+////
 
 const LS_KEY = 'SDKTP';
 
@@ -46,6 +50,23 @@ function save() {
     const s = JSON.stringify(state);
     localStorage.setItem(LS_KEY, s);
 }
+
+////
+
+let isMobile = false;
+let svgScale = 1;
+if (window.innerWidth <= 768) {
+    isMobile = true;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const svgW = 500;
+    const s = Math.min(w, h);
+    svgScale = s / svgW;
+}
+
+document.body.classList.add(isMobile ? 'mobile' : 'desktop');
+
+////
 
 function setColor(cell, r, g, b) {
     const f = cell.getAttribute('fill');
@@ -164,6 +185,14 @@ fetch('grid5.svg')
         const parser = new DOMParser();
         const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
         const svgElement = svgDoc.documentElement;
+
+        svgElement.setAttribute('viewBox', '0 0 500 487');
+
+        if (isMobile && svgScale < 1) {
+            svgElement.setAttribute('width', Math.round(500 * svgScale));
+            svgElement.setAttribute('height', Math.round(487 * svgScale));
+        }
+
         document.body.appendChild(svgElement);
 
         // make text elements not receive pointer events
@@ -192,6 +221,21 @@ fetch('grid5.svg')
 
 const keys = ['1', '2', '3', '4', '5', '6', '7', '8', 'Backspace'];
 
+function onNumberInput(k) {
+    let prev = state[selectedIndex];
+    setLabel(selectedIndex, k);
+    state[selectedIndex] = parseInt(k, 10);
+    if (!check(selectedIndex)) state[selectedIndex] = prev;
+    save();
+}
+
+function onClearCellInput() {
+    setLabel(selectedIndex, '');
+    state[selectedIndex] = undefined;
+    colorize(selectedIndex);
+    save();
+}
+
 document.addEventListener('keydown', (ev) => {
     if (selectedIndex === -1) return;
     const k = ev.key;
@@ -199,19 +243,25 @@ document.addEventListener('keydown', (ev) => {
     //console.log('key', k);
     if (keys.includes(k)) {
         if (k === 'Backspace') {
-            setLabel(selectedIndex, '');
-            state[selectedIndex] = undefined;
-            colorize(selectedIndex);
+            onClearCellInput();
         } else {
-            let prev = state[selectedIndex];
-            setLabel(selectedIndex, k);
-            state[selectedIndex] = parseInt(k, 10);
-            if (!check(selectedIndex)) {
-                state[selectedIndex] = prev;
-            }
+            onNumberInput(k);
         }
-        save();
         ev.preventDefault();
         ev.stopPropagation();
     }
 });
+
+if (isMobile) {
+    const uiEl = document.querySelector('.ui');
+    uiEl.addEventListener('click', (ev) => {
+        const targetEl = ev.target;
+        if (targetEl.tagName.toLowerCase() !== 'button') return;
+        const isClear = targetEl.id === 'clear';
+        if (isClear) {
+            onClearCellInput();
+        } else {
+            onNumberInput(targetEl.textContent);
+        }
+    });
+}
