@@ -31,6 +31,9 @@ I tend to learn by doing. Found this board's geometry to be challenging to inter
 I both wanted to see how easily I could implement the constraints and help visualize them during puzzle solving.
 I believe my highlighting approach to be more effective.
 
+- [play easy puzzle (40 cells)](https://josepedrodias.github.io/sudokutope/#40)
+- [play harder puzzle (60 cells)](https://josepedrodias.github.io/sudokutope/)
+
 ## puzzles
 
 (these puzzles are from the site. I haven't attempted to generate puzzles)
