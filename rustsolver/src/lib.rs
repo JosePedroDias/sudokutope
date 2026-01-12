@@ -492,6 +492,263 @@ pub fn solve60(json_input: &str) -> String {
     result
 }
 
+/// Add gaps to a solved puzzle incrementally, showing difficulty at each step
+///
+/// This function starts with a solved puzzle and adds gaps one by one,
+/// printing the puzzle and its difficulty metrics after each gap is added.
+/// This allows generating multiple puzzles with different difficulty levels
+/// from a single solved puzzle.
+///
+/// # Arguments
+/// * `json_input` - A JSON array string representing a SOLVED puzzle (no nulls)
+/// * `gap_count` - Number of values to remove (replace with null)
+/// * `num_puzzles` - Number of different puzzle variations to generate (default: 1)
+///
+/// # Returns
+/// A JSON array of puzzles with their difficulty metrics
+pub fn add_gaps(json_input: &str, gap_count: usize, num_puzzles: usize) -> String {
+    let input = match parse_input(json_input) {
+        Ok(v) => v,
+        Err(e) => return format!(r#"{{"error":"{}"}}"#, e),
+    };
+
+    let puzzle_size = input.len();
+
+    // Verify it's a solved puzzle (no nulls)
+    if input.iter().any(|v| v.is_none()) {
+        return r#"{"error":"Input must be a solved puzzle (no nulls)"}"#.to_string();
+    }
+
+    // Validate gap_count
+    if gap_count > puzzle_size {
+        return format!(r#"{{"error":"gap_count ({}) cannot exceed puzzle size ({})"}}"#, gap_count, puzzle_size);
+    }
+
+    if gap_count == 0 {
+        return r#"{"error":"gap_count must be at least 1"}"#.to_string();
+    }
+
+    if num_puzzles == 0 {
+        return r#"{"error":"num_puzzles must be at least 1"}"#.to_string();
+    }
+
+    // Determine puzzle type
+    let puzzle_size_match = match puzzle_size {
+        40 => 40,
+        60 => 60,
+        _ => return format!(r#"{{"error":"Puzzle must be 40 or 60 cells, got {}"}}"#, puzzle_size),
+    };
+
+    let mut all_puzzles = Vec::new();
+
+    // Generate num_puzzles different variations
+    for puzzle_num in 1..=num_puzzles {
+        eprintln!("\n=== Puzzle {} ===", puzzle_num);
+
+        // Create a shuffled list of indices to remove
+        let mut indices: Vec<usize> = (0..puzzle_size).collect();
+        let mut rng = rand::thread_rng();
+        indices.shuffle(&mut rng);
+
+        // Incrementally add gaps and print progress
+        for current_gaps in 1..=gap_count {
+            let gaps_set: HashSet<usize> = indices.iter().take(current_gaps).copied().collect();
+
+            // Build puzzle with current_gaps gaps
+            let puzzle_values: Vec<Option<u8>> = input
+                .iter()
+                .enumerate()
+                .map(|(i, &val)| {
+                    if gaps_set.contains(&i) {
+                        None
+                    } else {
+                        val
+                    }
+                })
+                .collect();
+
+            // Create state for difficulty assessment
+            let mut state: State = puzzle_values
+                .iter()
+                .map(|&v| match v {
+                    Some(val) => Cell::Fixed(val),
+                    None => Cell::Options(if puzzle_size == 40 { get_set_8() } else { get_set_10() }),
+                })
+                .collect();
+
+            // Propagate constraints
+            let valid = match puzzle_size_match {
+                40 => propagate_constraints(&mut state, &CONSTRAINTS_40),
+                60 => propagate_constraints(&mut state, &CONSTRAINTS_60),
+                _ => unreachable!(),
+            };
+
+            if !valid {
+                eprintln!("Puzzle {} became invalid at {} gaps", puzzle_num, current_gaps);
+                continue;
+            }
+
+            // Count complexity
+            let (total_options, max_options, cells_with_options) = count_options(&state);
+
+            if total_options == 0 && cells_with_options > 0 {
+                eprintln!("Puzzle {} became unsolvable at {} gaps", puzzle_num, current_gaps);
+                continue;
+            }
+
+            let avg_options = if cells_with_options > 0 {
+                total_options as f64 / cells_with_options as f64
+            } else {
+                0.0
+            };
+
+            // Print puzzle as JSON array
+            let puzzle_json: Vec<Value> = puzzle_values
+                .iter()
+                .map(|&v| match v {
+                    Some(val) => Value::Number(val.into()),
+                    None => Value::Null,
+                })
+                .collect();
+
+            let puzzle_str = serde_json::to_string(&puzzle_json).unwrap();
+
+            // Print to stderr so it doesn't interfere with final JSON output
+            eprintln!("  Gaps: {:2} | Difficulty: {:3} total, {:4.2} avg, {:2} max | {}",
+                      current_gaps, total_options, avg_options, max_options, puzzle_str);
+        }
+
+        // Add final puzzle to results
+        let gaps_set: HashSet<usize> = indices.iter().take(gap_count).copied().collect();
+        let final_puzzle: Vec<Value> = input
+            .iter()
+            .enumerate()
+            .map(|(i, &val)| {
+                if gaps_set.contains(&i) {
+                    Value::Null
+                } else {
+                    match val {
+                        Some(v) => Value::Number(v.into()),
+                        None => Value::Null,
+                    }
+                }
+            })
+            .collect();
+
+        all_puzzles.push(serde_json::to_string(&final_puzzle).unwrap());
+    }
+
+    // Return array of all generated puzzles
+    format!("[{}]", all_puzzles.join(","))
+}
+
+/// Helper function to count options in a state
+/// Returns (total_options, max_options, cells_with_options)
+fn count_options(state: &State) -> (usize, usize, usize) {
+    let mut total_options = 0;
+    let mut max_options = 0;
+    let mut cells_with_options = 0;
+
+    for cell in state {
+        if let Cell::Options(opts) = cell {
+            let count = opts.len();
+            total_options += count;
+            max_options = max_options.max(count);
+            cells_with_options += 1;
+        }
+    }
+
+    (total_options, max_options, cells_with_options)
+}
+
+/// Assess the difficulty of a puzzle by counting total options after basic validation
+///
+/// This function:
+/// 1. Replaces any null with full options (8 or 10 depending on puzzle size)
+/// 2. Eliminates options that would fail validation (conflict with fixed values)
+/// 3. Returns the cumulative number of options left
+///
+/// # Arguments
+/// * `json_input` - A JSON array string representing a puzzle (may contain nulls)
+///
+/// # Returns
+/// A JSON string with the total number of options: `{"difficulty": <usize>}`
+/// Higher numbers indicate more difficult puzzles
+pub fn assess_difficulty(json_input: &str) -> String {
+    let input = match parse_input(json_input) {
+        Ok(v) => v,
+        Err(e) => return format!(r#"{{"error":"{}"}}"#, e),
+    };
+
+    let puzzle_size = input.len();
+
+    // Create initial state: replace nulls with full options
+    let mut state: State = input
+        .iter()
+        .map(|&v| match v {
+            Some(val) => Cell::Fixed(val),
+            None => Cell::Options(if puzzle_size == 40 { get_set_8() } else { get_set_10() }),
+        })
+        .collect();
+
+    // Eliminate options that would fail validation
+    // Handle 40 and 60 cell puzzles separately due to different constraint types
+    match puzzle_size {
+        40 => {
+            for constraint in &CONSTRAINTS_40 {
+                // Collect fixed values in this constraint
+                let fixed_values: HashSet<u8> = constraint
+                    .iter()
+                    .filter_map(|&idx| {
+                        if let Cell::Fixed(val) = state[idx] {
+                            Some(val)
+                        } else {
+                            None
+                        }
+                    })
+                    .collect();
+
+                // Remove fixed values from options in this constraint
+                for &idx in constraint {
+                    if let Cell::Options(ref mut opts) = state[idx] {
+                        opts.retain(|&v| !fixed_values.contains(&v));
+                    }
+                }
+            }
+        }
+        60 => {
+            for constraint in &CONSTRAINTS_60 {
+                // Collect fixed values in this constraint
+                let fixed_values: HashSet<u8> = constraint
+                    .iter()
+                    .filter_map(|&idx| {
+                        if let Cell::Fixed(val) = state[idx] {
+                            Some(val)
+                        } else {
+                            None
+                        }
+                    })
+                    .collect();
+
+                // Remove fixed values from options in this constraint
+                for &idx in constraint {
+                    if let Cell::Options(ref mut opts) = state[idx] {
+                        opts.retain(|&v| !fixed_values.contains(&v));
+                    }
+                }
+            }
+        }
+        _ => return format!(r#"{{"error":"Puzzle must be 40 or 60 cells, got {}"}}"#, puzzle_size),
+    }
+
+    // Count total options
+    let (total_options, _, _) = count_options(&state);
+
+    format!(r#"{{"difficulty":{}}}"#, total_options)
+}
+
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -549,5 +806,103 @@ mod tests {
         let input = r#"[1,2,3]"#;
         let result = solve60(input);
         assert!(result.contains("error"));
+    }
+
+    #[test]
+    fn test_add_gaps() {
+        let solved = r#"[1,6,6,7,8,7,5,3,4,3,8,2,5,8,2,1,4,6,4,5,2,7,1,3,3,6,2,7,8,1,5,4,4,3,1,7,8,2,5,6]"#;
+        let result = add_gaps(solved, 15, 1);
+
+        // Should not be an error
+        assert!(!result.contains("error"), "Should not error: {}", result);
+
+        // Parse as array of puzzles
+        let parsed: Result<Vec<Vec<Option<u8>>>, _> = serde_json::from_str(&result);
+        assert!(parsed.is_ok(), "Result should be valid JSON array: {}", result);
+
+        let puzzles = parsed.unwrap();
+        assert_eq!(puzzles.len(), 1, "Should have 1 puzzle");
+
+        let puzzle = &puzzles[0];
+        assert_eq!(puzzle.len(), 40, "Should have 40 elements");
+
+        // Count nulls
+        let null_count = puzzle.iter().filter(|v| v.is_none()).count();
+        assert_eq!(null_count, 15, "Should have exactly 15 gaps");
+
+        // Count non-nulls
+        let filled_count = puzzle.iter().filter(|v| v.is_some()).count();
+        assert_eq!(filled_count, 25, "Should have 25 filled cells");
+    }
+
+    #[test]
+    fn test_add_gaps_multiple() {
+        let solved = r#"[1,6,6,7,8,7,5,3,4,3,8,2,5,8,2,1,4,6,4,5,2,7,1,3,3,6,2,7,8,1,5,4,4,3,1,7,8,2,5,6]"#;
+        let result = add_gaps(solved, 10, 3);
+
+        // Parse as array of puzzles
+        let parsed: Result<Vec<Vec<Option<u8>>>, _> = serde_json::from_str(&result);
+        assert!(parsed.is_ok(), "Result should be valid JSON array");
+
+        let puzzles = parsed.unwrap();
+        assert_eq!(puzzles.len(), 3, "Should have 3 puzzles");
+
+        // Each puzzle should have 10 gaps
+        for puzzle in &puzzles {
+            let null_count = puzzle.iter().filter(|v| v.is_none()).count();
+            assert_eq!(null_count, 10, "Each puzzle should have exactly 10 gaps");
+        }
+    }
+
+    #[test]
+    fn test_add_gaps_invalid_count() {
+        let solved = r#"[1,2,3,4,5]"#;
+        let result = add_gaps(solved, 10, 1);
+        assert!(result.contains("error"), "Should error when gap_count > puzzle size");
+    }
+
+    #[test]
+    fn test_add_gaps_zero() {
+        let solved = r#"[1,6,6,7,8,7,5,3,4,3,8,2,5,8,2,1,4,6,4,5,2,7,1,3,3,6,2,7,8,1,5,4,4,3,1,7,8,2,5,6]"#;
+        let result = add_gaps(solved, 0, 1);
+        assert!(result.contains("error"), "Should error when gap_count is 0");
+    }
+
+    #[test]
+    fn test_assess_difficulty() {
+        // Test with a solved puzzle (no gaps)
+        let solved = r#"[1,6,6,7,8,7,5,3,4,3,8,2,5,8,2,1,4,6,4,5,2,7,1,3,3,6,2,7,8,1,5,4,4,3,1,7,8,2,5,6]"#;
+        let result = assess_difficulty(solved);
+
+        assert!(!result.contains("error"), "Should not error: {}", result);
+
+        // Parse result
+        let metrics: serde_json::Value = serde_json::from_str(&result).unwrap();
+
+        // Solved puzzle should have 0 difficulty (no options)
+        assert_eq!(metrics["difficulty"].as_u64().unwrap(), 0, "Solved puzzle should have 0 difficulty");
+    }
+
+    #[test]
+    fn test_assess_difficulty_with_gaps() {
+        // Test with a puzzle that has many gaps (should have remaining options)
+        let puzzle = r#"[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]"#;
+        let result = assess_difficulty(puzzle);
+
+        assert!(!result.contains("error"), "Should not error: {}", result);
+
+        // Parse result
+        let metrics: serde_json::Value = serde_json::from_str(&result).unwrap();
+
+        // Empty puzzle should have very high difficulty (many options)
+        let difficulty = metrics["difficulty"].as_u64().unwrap();
+        assert!(difficulty > 100, "Empty puzzle should have high difficulty, got {}", difficulty);
+    }
+
+    #[test]
+    fn test_assess_difficulty_invalid_puzzle() {
+        let input = r#"[1,2,3]"#;
+        let result = assess_difficulty(input);
+        assert!(result.contains("error"), "Should error on invalid puzzle size");
     }
 }
