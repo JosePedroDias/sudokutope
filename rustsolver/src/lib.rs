@@ -2,6 +2,9 @@ use rand::seq::SliceRandom;
 use rayon::prelude::*;
 use serde_json::Value;
 use std::collections::HashSet;
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+use std::sync::{Arc, Mutex};
+use std::time::{Duration, Instant};
 
 const CONSTRAINTS_40: [[usize; 8]; 15] = [
     [1, 32, 35, 14, 13, 33, 34, 6],
@@ -49,6 +52,70 @@ enum Cell {
 }
 
 type State = Vec<Cell>;
+
+struct ProgressTracker {
+    total_cells: usize,
+    best_filled: Arc<AtomicUsize>,
+    last_report: Arc<Mutex<Instant>>,
+    solution_found: Arc<AtomicBool>,
+}
+
+impl ProgressTracker {
+    fn new(total_cells: usize) -> Self {
+        Self {
+            total_cells,
+            best_filled: Arc::new(AtomicUsize::new(0)),
+            last_report: Arc::new(Mutex::new(Instant::now())),
+            solution_found: Arc::new(AtomicBool::new(false)),
+        }
+    }
+
+    fn is_solution_found(&self) -> bool {
+        self.solution_found.load(Ordering::Relaxed)
+    }
+
+    fn mark_solution_found(&self) {
+        self.solution_found.store(true, Ordering::Relaxed);
+    }
+
+    fn update(&self, state: &State) {
+        let filled = state.iter().filter(|c| matches!(c, Cell::Fixed(_))).count();
+
+        // Update best filled count
+        let mut current_best = self.best_filled.load(Ordering::Relaxed);
+        while filled > current_best {
+            match self.best_filled.compare_exchange_weak(
+                current_best,
+                filled,
+                Ordering::Relaxed,
+                Ordering::Relaxed,
+            ) {
+                Ok(_) => break,
+                Err(x) => current_best = x,
+            }
+        }
+
+        
+        if let Ok(mut last_report) = self.last_report.try_lock() {
+            // Report progress every 100ms
+            // if last_report.elapsed() >= Duration::from_millis(100) {
+            // Report progress every second
+            if last_report.elapsed() >= Duration::from_secs(1) {
+                eprintln!("Progress: {}/{} cells filled", filled, self.total_cells);
+                *last_report = Instant::now();
+            }
+        }
+    }
+
+    fn clone_refs(&self) -> Self {
+        Self {
+            total_cells: self.total_cells,
+            best_filled: Arc::clone(&self.best_filled),
+            last_report: Arc::clone(&self.last_report),
+            solution_found: Arc::clone(&self.solution_found),
+        }
+    }
+}
 
 fn get_set_8() -> HashSet<u8> {
     (1..=8).collect()
@@ -188,11 +255,22 @@ fn solve_step<const N: usize>(
     state: &mut State,
     last_choices: &mut Vec<usize>,
     total_steps: &mut usize,
+    progress: &ProgressTracker,
 ) -> Option<State> {
+    // Early exit if another thread already found a solution
+    if progress.is_solution_found() {
+        return None;
+    }
+
     *total_steps += 1;
 
+    // Update progress
+    progress.update(state);
+
     if is_solved(state) {
-        println!("solved after {} steps!", total_steps);
+        // Mark that we found a solution (this prevents other threads from continuing)
+        progress.mark_solution_found();
+        eprintln!("solved after {} steps!", total_steps);
         return Some(state.clone());
     }
 
@@ -245,6 +323,7 @@ fn solve_step<const N: usize>(
     // Only parallelize if we have 3+ options to avoid overhead
     if options.len() >= 3 && *total_steps < 100 {
         // Try options in parallel
+        let progress_clone = progress.clone_refs();
         let result = options.par_iter().find_map_any(|&option| {
             let mut new_state = deep_copy_state(state);
             new_state[idx] = Cell::Fixed(option);
@@ -266,7 +345,7 @@ fn solve_step<const N: usize>(
             }
 
             let mut local_steps = *total_steps;
-            solve_step(max_target_size, constraints, &mut new_state, &mut new_last_choices, &mut local_steps)
+            solve_step(max_target_size, constraints, &mut new_state, &mut new_last_choices, &mut local_steps, &progress_clone)
         });
 
         if let Some(solution) = result {
@@ -297,7 +376,7 @@ fn solve_step<const N: usize>(
             last_choices.remove(0);
         }
 
-        let result = solve_step(max_target_size, constraints, &mut new_state, last_choices, total_steps);
+        let result = solve_step(max_target_size, constraints, &mut new_state, last_choices, total_steps, progress);
 
         // Remove the last choice for backtracking
         last_choices.pop();
@@ -344,6 +423,8 @@ fn state_to_json(state: &State) -> String {
 }
 
 pub fn solve40(json_input: &str) -> String {
+    let start_time = Instant::now();
+
     let input = match parse_input(json_input) {
         Ok(v) => v,
         Err(e) => return format!(r#"{{"error":"{}"}}"#, e),
@@ -363,14 +444,22 @@ pub fn solve40(json_input: &str) -> String {
 
     let mut last_choices = Vec::new();
     let mut total_steps = 0;
+    let progress = ProgressTracker::new(40);
 
-    match solve_step(8, &CONSTRAINTS_40, &mut state, &mut last_choices, &mut total_steps) {
+    let result = match solve_step(8, &CONSTRAINTS_40, &mut state, &mut last_choices, &mut total_steps, &progress) {
         Some(solution) => state_to_json(&solution),
         None => r#"{"error":"No solution found"}"#.to_string(),
-    }
+    };
+
+    let elapsed = start_time.elapsed();
+    eprintln!("Solve time: {:.3} seconds", elapsed.as_secs_f64());
+
+    result
 }
 
 pub fn solve60(json_input: &str) -> String {
+    let start_time = Instant::now();
+
     let input = match parse_input(json_input) {
         Ok(v) => v,
         Err(e) => return format!(r#"{{"error":"{}"}}"#, e),
@@ -390,11 +479,17 @@ pub fn solve60(json_input: &str) -> String {
 
     let mut last_choices = Vec::new();
     let mut total_steps = 0;
+    let progress = ProgressTracker::new(60);
 
-    match solve_step(10, &CONSTRAINTS_60, &mut state, &mut last_choices, &mut total_steps) {
+    let result = match solve_step(10, &CONSTRAINTS_60, &mut state, &mut last_choices, &mut total_steps, &progress) {
         Some(solution) => state_to_json(&solution),
         None => r#"{"error":"No solution found"}"#.to_string(),
-    }
+    };
+
+    let elapsed = start_time.elapsed();
+    eprintln!("Solve time: {:.3} seconds", elapsed.as_secs_f64());
+
+    result
 }
 
 #[cfg(test)]

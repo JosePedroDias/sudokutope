@@ -89,3 +89,21 @@ The solver uses:
 
 The Rust implementation includes optimizations for early detection of dead-end branches, significantly reducing wasted computation compared to naive backtracking approaches.
 
+### Performance Monitoring
+
+The solver automatically reports:
+
+1. **Solve time**: Displayed in seconds after each solve completes
+   ```
+   Solve time: 0.141 seconds
+   ```
+
+2. **Progress updates**: Progress is reported every second, showing filled cells at the time
+   ```
+   Progress: 35/60 cells filled
+   Progress: 42/60 cells filled
+   Progress: 58/60 cells filled
+   ```
+
+These metrics help you understand solver performance and track progress on difficult puzzles.
+
