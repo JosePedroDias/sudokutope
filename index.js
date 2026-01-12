@@ -18,7 +18,7 @@ function load() {
     if (s) {
         const o = JSON.parse(s);
         state = o.map(v => v === null ? undefined : v);
-        for (let i = 0; i < mode; i++) setLabel(i, state[i] || '');
+        for (let i = 0; i < mode; i++) setLabel(i, state[i]);
     }
 }
 
@@ -69,6 +69,8 @@ function petalFromId(id) {
 }
 
 function setLabel(id, text) {
+    if (text === undefined) text = '';
+    else if (typeof text === 'number') text = text.toString();
     const el = document.getElementById(`label${id}`);
     el.textContent = text;
 }
@@ -179,7 +181,7 @@ Promise.all([
         });
         //return;
         clear();
-        for (let i = 0; i < mode; i++) setLabel(i, state [i] || '');
+        for (let i = 0; i < mode; i++) setLabel(i, state[i]);
         load();
 
         svgElement.addEventListener('click', (ev) => {
