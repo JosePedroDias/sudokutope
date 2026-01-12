@@ -1,4 +1,5 @@
 let mode = 60;
+if (location.hash === '#40') mode = 40;
 let numPetals = mode === 40 ? 5 : 6;
 
 let selectedIndex = -1;
@@ -6,7 +7,6 @@ let state = new Array(mode).fill(true);
 {
     for (let i = 0; i < mode; i++) state[i] = undefined;
 }
-
 let cellGroups = {};
 
 ////
