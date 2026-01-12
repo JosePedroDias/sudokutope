@@ -38,6 +38,10 @@ const allConstraints = {
     ]
 };
 
+function log(...args) {
+    //console.log(...args);
+}
+
 function randomizeArray(arrSet) {
     const arr = Array.from(arrSet);
     for (let i = arr.length - 1; i > 0; i--) {
@@ -91,13 +95,29 @@ function trampoline(fn) {
     return fn;
 }
 
-function solveStep(maxTargetSize, constraints, st, lastChoices, stepNo) {
-    console.log(`\n ** step ${stepNo} **`);
+let totalSteps = 0;
+
+function deepCopyState(st) {
+    return st.map(cell => typeof cell === 'number' ? cell : new Set(cell));
+}
+
+function solveStep(maxTargetSize, constraints, st, lastChoices) {
+    ++totalSteps;
+    log(`\n ** step ${totalSteps} **`);
 
     if (isSolved(st)) {
-        console.log('solved!');
+        console.log(`solved after than ${totalSteps} steps!`);
         return st;
     }
+
+    // Check if current state is already invalid (any cell has 0 options)
+    for (let i = 0; i < st.length; i++) {
+        if (typeof st[i] !== 'number' && st[i].size === 0) {
+            log(`cell #${i} has NO valid options! Invalid state detected.`);
+            return null;
+        }
+    }
+
     let targetSize = 2;
     let idx;
     let indices = [];
@@ -106,74 +126,122 @@ function solveStep(maxTargetSize, constraints, st, lastChoices, stepNo) {
     while (targetSize <= maxTargetSize && indices.length === 0) {
         indices = findIndices(st, (s, i) => !lastChoices.includes(i) && typeof s !== 'number' && s.size === targetSize);
         if (indices.length === 0) {
-            console.log(`no cell with size ${targetSize} (avoiding lastChoices)`);
+            log(`no cell with size ${targetSize} (avoiding lastChoices)`);
             ++targetSize;
         }
     }
 
     // Second try: if nothing found, ignore lastChoices constraint
     if (indices.length === 0) {
-        console.log('no cells found avoiding lastChoices, trying without that constraint');
+        log('no cells found avoiding lastChoices, trying without that constraint');
         targetSize = 2;
         while (targetSize <= maxTargetSize && indices.length === 0) {
             indices = findIndices(st, (s, i) => typeof s !== 'number' && s.size === targetSize);
             if (indices.length === 0) {
-                console.log(`no cell with size ${targetSize}`);
+                log(`no cell with size ${targetSize}`);
                 ++targetSize;
             }
         }
     }
 
-    if (indices.length > 0) {
-        idx = oneOf(indices);
-        console.log(`found ${indices.length} cells with size ${targetSize}! going with cell #${idx} with options ${Array.from(st[idx])}`);
-    } else {
-        console.log('no suitable cells found!');
-        return st;
+    if (indices.length === 0) {
+        log('no suitable cells found!');
+        return null;
     }
+
+    idx = oneOf(indices);
+    log(`found ${indices.length} cells with size ${targetSize}! going with cell #${idx} with options ${Array.from(st[idx])}`);
 
     let options = Array.from(st[idx]);
 
+    // Try each option with backtracking
     for (let option of options) {
-        const newSt = st.slice();
+        log(`\n=== Trying cell #${idx} = ${option} ===`);
+
+        // Create a deep copy of the state for this branch
+        const newSt = deepCopyState(st);
         newSt[idx] = option;
-        const res = isValid(newSt, constraints);
-        console.log(`trying setting it to ${option}... ${res}`);
-        if (!res) st[idx].delete(option);
+
+        // Check if this choice is immediately invalid
+        if (!isValid(newSt, constraints)) {
+            log(`cell #${idx} = ${option} is immediately invalid`);
+            continue;
+        }
+
+        // Propagate constraints: eliminate invalid options from other cells
+        let changed = true;
+        let hasInvalidCell = false;
+        while (changed && !hasInvalidCell) {
+            changed = false;
+            for (let i = 0; i < newSt.length; i++) {
+                if (typeof newSt[i] === 'number') continue;
+
+                const optionsToCheck = Array.from(newSt[i]);
+                for (let opt of optionsToCheck) {
+                    const testSt = newSt.slice();
+                    testSt[i] = opt;
+                    if (!isValid(testSt, constraints)) {
+                        newSt[i].delete(opt);
+                        changed = true;
+                    }
+                }
+
+                // Convert to number if only one option left
+                if (newSt[i].size === 1) {
+                    newSt[i] = Array.from(newSt[i])[0];
+                    changed = true;
+                } else if (newSt[i].size === 0) {
+                    // This branch is invalid - exit immediately
+                    hasInvalidCell = true;
+                    break;
+                }
+            }
+        }
+
+        if (hasInvalidCell) {
+            log(`cell #${idx} = ${option} leads to invalid state after propagation`);
+            continue;
+        }
+
+        const result = trampoline(() => solveStep(maxTargetSize, constraints, newSt, [idx]));
+
+        if (result !== null) {
+            log(`cell #${idx} = ${option} led to solution!`);
+            return result;
+        }
+
+        log(`cell #${idx} = ${option} failed, backtracking...`);
     }
-    if (st[idx].size === 1) {
-        st[idx] = Array.from(st[idx])[0];
-        console.log(`cell #${idx} has only one option: ${st[idx]}!`);
-    } else {
-        console.log(`cell #${idx} has now ${Array.from(st[idx])} options (${st[idx].size})`);
-    }
 
-    //if (stepNo > 4000) { return st; }
-
-    lastChoices.push(idx);
-    if (lastChoices.length > 10) lastChoices.shift();
-
-    return () => solveStep(maxTargetSize, constraints, st, lastChoices, stepNo + 1);
+    log(`All options for cell #${idx} exhausted, backtracking further...`);
+    return null;
 }
 
+// array of board cells: each is a number or a set of numbers (it is only a number if cell already determined)
+
 function solve40(st0) {
-    // array of board cells: each is a number or a set of numbers (it is only a number if cell already determined)
     const st = st0.map(v => (v === undefined || v === null) ? get8() : v);
-    return trampoline(() => solveStep(8, allConstraints[40], st, [], 0));
+    return trampoline(() => solveStep(8, allConstraints[40], st, []));
 }
 
 function solve60(st0) {
-    // array of board cells: each is a number or a set of numbers (it is only a number if cell already determined)
     const st = st0.map(v => (v === undefined || v === null) ? get10() : v);
-    return trampoline(() => solveStep(10, allConstraints[60], st, [], 0));
+    return trampoline(() => solveStep(10, allConstraints[60], st, []));
 }
 
 // 2026-01-11 easy id: bc3a408847c14afdfc367af979779c3fe88ef7e65113ea47309f3835a2489197
-console.log( solve40([1,null,null,7,null,null,5,3,null,3,null,null,null,8,2,null,null,6,4,null,null,null,1,null,null,null,null,7,null,null,5,4,null,3,null,null,null,2,null,null]) )
+//console.log( solve40([1,null,null,7,null,null,5,3,null,3,null,null,null,8,2,null,null,6,4,null,null,null,1,null,null,null,null,7,null,null,5,4,null,3,null,null,null,2,null,null]) )
 //localStorage.setItem('SDKTP40', '[1,null,null,7,null,null,5,3,null,3,null,null,null,8,2,null,null,6,4,null,null,null,1,null,null,null,null,7,null,null,5,4,null,3,null,null,null,2,null,null]')
 //localStorage.setItem('SDKTP40', '[1,6,6,7,8,7,5,3,4,3,8,2,5,8,2,1,4,6,4,5,2,7,1,3,3,6,2,7,8,1,5,4,4,3,1,7,8,2,5,6]')
+
+// THIS GENERATES A BRAND NEW 40 PUZZLE
+console.log( solve40([null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]) )
+//localStorage.setItem('SDKTP40', '[3,1,1,5,4,5,6,2,8,7,3,2,6,4,7,3,8,1,8,6,2,5,7,4,2,1,7,5,3,4,6,8,8,2,3,5,7,4,6,1]')
 
 // 2026-01-11 medium id: cc37840fd2238b48effb294b91fca577e9b9d88cbe6e3ea8afeff4ce4dacc110
 //console.log( solve60([null,null,null,null,null,3,null,1,null,null,null,null,null,null,null,null,5,2,null,8,null,null,null,3,null,null,null,null,7,null,6,9,null,null,null,null,null,null,null,2,null,null,9,null,null,null,4,null,null,null,null,null,null,null,null,null,null,null,null,null]) )
 // localStorage.setItem('SDKTP60', '[null,null,null,null,null,3,null,1,null,null,null,null,null,null,null,null,5,2,null,8,null,null,null,3,null,null,null,null,7,null,6,9,null,null,null,null,null,null,null,2,null,null,9,null,null,null,4,null,null,null,null,null,null,null,null,null,null,null,null,null]')
-// localStorage.setItem('SDKTP60', '')
+// localStorage.setItem('SDKTP60', '[0,6,2,0,7,3,8,1,9,8,4,5,6,4,0,9,5,2,2,8,1,0,7,3,5,1,4,3,7,8,6,9,1,6,7,4,5,3,9,2,2,8,9,5,3,0,4,7,6,1,9,2,5,7,0,4,3,1,6,8]')
+
+// GENERATES ONE NEW 60 PUZZLE (TOO SLOW?)
+//console.log( solve60([null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,3,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]) )
