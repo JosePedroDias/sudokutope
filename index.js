@@ -1,5 +1,20 @@
 let mode = 60;
-if (location.hash === '#40') mode = 40;
+let puzzleString = undefined;
+{
+    const hx = location.hash;
+    if (hx) {
+        try {
+            let [a, b] = decodeURIComponent(hx.slice(1)).split(' ');
+            if (a === '40' || a === '60') {
+                mode = parseInt(a, 10);
+            }
+            if (b) {
+                puzzleString = b;
+            }
+            location.hash = `#${mode}`;
+        } catch (e) {}
+    }
+}
 let numPetals = mode === 40 ? 5 : 6;
 
 let selectedIndex = -1;
@@ -12,6 +27,14 @@ let cellGroups = {};
 ////
 
 const LS_KEY = `SDKTP${mode}`;
+
+if (puzzleString) {
+    const parsed = JSON.parse(puzzleString);
+    for (let i = 0; i < mode; i++) {
+        state[i] = parsed[i] === null ? undefined : parsed[i];
+        save();
+    }
+}
 
 function load() {
     const s = localStorage.getItem(LS_KEY);
