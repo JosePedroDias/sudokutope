@@ -1,4 +1,5 @@
 use rand::seq::SliceRandom;
+use rayon::prelude::*;
 use serde_json::Value;
 use std::collections::HashSet;
 
@@ -76,6 +77,38 @@ fn is_valid<const N: usize>(state: &State, constraints: &[[usize; N]]) -> bool {
     true
 }
 
+// Check if setting a specific cell to a value would be valid
+fn is_valid_assignment<const N: usize>(
+    state: &State,
+    constraints: &[[usize; N]],
+    cell_idx: usize,
+    value: u8,
+) -> bool {
+    for constraint in constraints {
+        // Only check constraints that include this cell
+        if !constraint.contains(&cell_idx) {
+            continue;
+        }
+
+        let mut seen = HashSet::new();
+        for &idx in constraint {
+            let v = if idx == cell_idx {
+                value
+            } else if let Cell::Fixed(val) = state[idx] {
+                val
+            } else {
+                continue;
+            };
+
+            if seen.contains(&v) {
+                return false;
+            }
+            seen.insert(v);
+        }
+    }
+    true
+}
+
 fn deep_copy_state(state: &State) -> State {
     state
         .iter()
@@ -105,6 +138,48 @@ fn find_indices_with_size_no_avoid(state: &State, target_size: usize) -> Vec<usi
         .filter(|(_, cell)| matches!(cell, Cell::Options(opts) if opts.len() == target_size))
         .map(|(i, _)| i)
         .collect()
+}
+
+// Propagate constraints and return false if invalid state is reached
+fn propagate_constraints<const N: usize>(state: &mut State, constraints: &[[usize; N]]) -> bool {
+    let mut changed = true;
+    while changed {
+        changed = false;
+        for i in 0..state.len() {
+            if matches!(state[i], Cell::Fixed(_)) {
+                continue;
+            }
+
+            let options_to_check: Vec<u8> = if let Cell::Options(opts) = &state[i] {
+                opts.iter().copied().collect()
+            } else {
+                continue;
+            };
+
+            // Use optimized validation that doesn't clone the entire state
+            for opt in options_to_check {
+                if !is_valid_assignment(state, constraints, i, opt) {
+                    if let Cell::Options(opts) = &mut state[i] {
+                        opts.remove(&opt);
+                        changed = true;
+                    }
+                }
+            }
+
+            // Convert to number if only one option left
+            if let Cell::Options(opts) = &state[i] {
+                if opts.len() == 1 {
+                    let val = *opts.iter().next().unwrap();
+                    state[i] = Cell::Fixed(val);
+                    changed = true;
+                } else if opts.is_empty() {
+                    // This branch is invalid
+                    return false;
+                }
+            }
+        }
+    }
+    true
 }
 
 fn solve_step<const N: usize>(
@@ -166,7 +241,41 @@ fn solve_step<const N: usize>(
         return None;
     };
 
-    // Try each option with backtracking
+    // If we have multiple options and are early in the search, try parallel exploration
+    // Only parallelize if we have 3+ options to avoid overhead
+    if options.len() >= 3 && *total_steps < 100 {
+        // Try options in parallel
+        let result = options.par_iter().find_map_any(|&option| {
+            let mut new_state = deep_copy_state(state);
+            new_state[idx] = Cell::Fixed(option);
+
+            if !is_valid(&new_state, constraints) {
+                return None;
+            }
+
+            // Propagate constraints
+            if !propagate_constraints(&mut new_state, constraints) {
+                return None;
+            }
+
+            // Recursively solve with this choice
+            let mut new_last_choices = last_choices.clone();
+            new_last_choices.push(idx);
+            if new_last_choices.len() > 10 {
+                new_last_choices.remove(0);
+            }
+
+            let mut local_steps = *total_steps;
+            solve_step(max_target_size, constraints, &mut new_state, &mut new_last_choices, &mut local_steps)
+        });
+
+        if let Some(solution) = result {
+            return Some(solution);
+        }
+        return None;
+    }
+
+    // Try each option with backtracking (sequential for small option sets or deep in search)
     for option in options {
         // Create a deep copy of the state for this branch
         let mut new_state = deep_copy_state(state);
@@ -177,49 +286,8 @@ fn solve_step<const N: usize>(
             continue;
         }
 
-        // Propagate constraints: eliminate invalid options from other cells
-        let mut changed = true;
-        let mut has_invalid_cell = false;
-        while changed && !has_invalid_cell {
-            changed = false;
-            for i in 0..new_state.len() {
-                if matches!(new_state[i], Cell::Fixed(_)) {
-                    continue;
-                }
-
-                let options_to_check: Vec<u8> = if let Cell::Options(opts) = &new_state[i] {
-                    opts.iter().copied().collect()
-                } else {
-                    continue;
-                };
-
-                for opt in options_to_check {
-                    let mut test_state = new_state.clone();
-                    test_state[i] = Cell::Fixed(opt);
-                    if !is_valid(&test_state, constraints) {
-                        if let Cell::Options(opts) = &mut new_state[i] {
-                            opts.remove(&opt);
-                            changed = true;
-                        }
-                    }
-                }
-
-                // Convert to number if only one option left
-                if let Cell::Options(opts) = &new_state[i] {
-                    if opts.len() == 1 {
-                        let val = *opts.iter().next().unwrap();
-                        new_state[i] = Cell::Fixed(val);
-                        changed = true;
-                    } else if opts.is_empty() {
-                        // This branch is invalid - exit immediately
-                        has_invalid_cell = true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if has_invalid_cell {
+        // Propagate constraints
+        if !propagate_constraints(&mut new_state, constraints) {
             continue;
         }
 
